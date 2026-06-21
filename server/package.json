@@ -1,0 +1,23 @@
+{
+  "name": "collab-terminal-server",
+  "version": "1.0.0",
+  "description": "Collaborative terminal server - WebSocket + PTY + Redis locking + MySQL logging",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.18.0",
+    "node-pty": "^1.0.0",
+    "ioredis": "^5.4.1",
+    "mysql2": "^3.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

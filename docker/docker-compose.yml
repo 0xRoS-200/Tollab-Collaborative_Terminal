@@ -1,0 +1,73 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: collab_terminal
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ../server/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  sandbox-image-builder:
+    # Not a long-running service -- just builds the sandbox image so
+    # it's available locally for the app to `docker run` against.
+    # `docker compose up` builds it as part of bringing the stack up.
+    build:
+      context: .
+      dockerfile: Dockerfile.sandbox
+    image: collab-terminal-sandbox
+    command: ["true"]   # exits immediately; image build is the point
+
+  app:
+    build:
+      context: ../server
+      dockerfile: ../docker/Dockerfile.server
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      sandbox-image-builder:
+        condition: service_completed_successfully
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: collabapp
+      MYSQL_PASSWORD: collabpass
+      MYSQL_DATABASE: collab_terminal
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-change-this-in-production}
+      PORT: 3000
+      SANDBOX_IMAGE: collab-terminal-sandbox
+    ports:
+      - "3000:3000"
+    volumes:
+      # Lets the app's `docker` CLI talk to the HOST's Docker daemon,
+      # so containers it spawns are siblings, not nested inside itself.
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  mysql_data:

@@ -1,0 +1,17 @@
+{
+  "name": "collab-terminal-client",
+  "version": "1.0.0",
+  "description": "CLI client for the collaborative terminal application",
+  "main": "index.js",
+  "bin": {
+    "collab-terminal": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "blessed": "^0.1.81",
+    "ws": "^8.18.0",
+    "dotenv": "^16.4.5"
+  }
+}

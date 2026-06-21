@@ -1,0 +1,41 @@
+# Main application server: Express + WebSocket + node-pty
+#
+# node-pty requires native compilation (node-gyp), so this image
+# needs build tools at build time. We use a multi-stage build to
+# keep the final image leaner.
+
+FROM node:20-bookworm-slim AS builder
+
+WORKDIR /app
+
+# Build deps for node-pty's native addon
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY package.json package-lock.json* ./
+RUN npm install --omit=dev
+
+COPY . .
+
+# ---- Runtime stage ----
+FROM node:20-bookworm-slim
+
+WORKDIR /app
+
+# The app needs the `docker` CLI itself, since ptyManager.js shells
+# out to `docker exec` to attach to each room's sandbox container.
+# We mount the host's docker socket at runtime (see docker-compose.yml)
+# and install the CLI here to talk to it.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    docker.io \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /app /app
+
+ENV NODE_ENV=production
+EXPOSE 3000
+
+CMD ["node", "index.js"]

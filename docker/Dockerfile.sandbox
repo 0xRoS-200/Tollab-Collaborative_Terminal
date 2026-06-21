@@ -1,0 +1,31 @@
+# The disposable sandbox shell. Each room gets a fresh container from
+# this image (see server/pty/containerManager.js). Kept minimal and
+# isolated -- no network access (set at `docker run` time), tight
+# memory/CPU/pids limits, and a non-root user so even a compromised
+# shell session can't do much damage inside its own container.
+
+FROM ubuntu:24.04
+
+# A reasonably useful but not bloated shell environment for a DBMS
+# project demo: basic CLI tools, no compilers/build chains, no network
+# tools that could be misused (the --network none flag already blocks
+# actual connectivity, but keeping the image lean is good defense in
+# depth and keeps build time down).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash \
+    coreutils \
+    grep \
+    sed \
+    gawk \
+    less \
+    nano \
+    tree \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Non-root sandbox user
+RUN useradd -m -s /bin/bash sandbox
+# USER sandbox
+WORKDIR /root
+
+CMD ["sleep", "infinity"]

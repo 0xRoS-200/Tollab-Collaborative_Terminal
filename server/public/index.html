@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Collaborative Terminal Admin Dashboard - Real-time statistics, active users, session durations, and command execution audit logs.">
+  <title>Collaborative Terminal — Web Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <span class="logo-icon">⚡</span>
+        <h1>Collaborative Terminal Admin</h1>
+      </div>
+      <div class="server-status">
+        <span class="status-indicator online"></span>
+        <span id="status-text">Server Online</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+
+    <!-- Stats Grid -->
+    <section class="stats-grid" aria-label="Quick Statistics Overview">
+      <div class="stat-card" id="stat-users-card">
+        <div class="stat-icon users-bg">👥</div>
+        <div class="stat-info">
+          <span class="stat-label">Total Users</span>
+          <span class="stat-value" id="val-users">0</span>
+        </div>
+      </div>
+      <div class="stat-card" id="stat-rooms-card">
+        <div class="stat-icon rooms-bg">🏠</div>
+        <div class="stat-info">
+          <span class="stat-label">Total Rooms</span>
+          <span class="stat-value" id="val-rooms">0</span>
+        </div>
+      </div>
+      <div class="stat-card" id="stat-sessions-card">
+        <div class="stat-icon sessions-bg">⏱️</div>
+        <div class="stat-info">
+          <span class="stat-label">Total Sessions</span>
+          <span class="stat-value" id="val-sessions">0</span>
+        </div>
+      </div>
+      <div class="stat-card" id="stat-commands-card">
+        <div class="stat-icon commands-bg">💻</div>
+        <div class="stat-info">
+          <span class="stat-label">Commands Run</span>
+          <span class="stat-value" id="val-commands">0</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabs Navigation -->
+    <nav class="tab-nav" aria-label="Dashboard Navigation">
+      <button class="tab-btn active" id="btn-tab-users" data-tab="tab-users">User Accounts</button>
+      <button class="tab-btn" id="btn-tab-sessions" data-tab="tab-sessions">Session History</button>
+      <button class="tab-btn" id="btn-tab-commands" data-tab="tab-commands">Command Audit Logs</button>
+    </nav>
+
+    <!-- Tab Contents -->
+    <section class="tab-container" aria-label="Dashboard Panels">
+      
+      <!-- Users Tab -->
+      <article class="tab-content active" id="tab-users">
+        <div class="table-header-controls">
+          <h2>Registered User Accounts</h2>
+          <button class="refresh-btn" id="refresh-users-btn">🔄 Refresh</button>
+        </div>
+        <div class="table-wrapper">
+          <table id="users-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Registration Date</th>
+                <th>Last Connected</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <tr>
+                <td colspan="5" class="loading-placeholder">Loading users data...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- Sessions Tab -->
+      <article class="tab-content" id="tab-sessions">
+        <div class="table-header-controls">
+          <h2>Room Session Lifetimes</h2>
+          <button class="refresh-btn" id="refresh-sessions-btn">🔄 Refresh</button>
+        </div>
+        <div class="table-wrapper">
+          <table id="sessions-table">
+            <thead>
+              <tr>
+                <th>Session ID</th>
+                <th>Room Name</th>
+                <th>Started By</th>
+                <th>Container Name / ID</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Duration</th>
+              </tr>
+            </thead>
+            <tbody id="sessions-table-body">
+              <tr>
+                <td colspan="7" class="loading-placeholder">Loading sessions data...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- Commands Tab -->
+      <article class="tab-content" id="tab-commands">
+        <div class="table-header-controls">
+          <h2>Command Execution Logs</h2>
+          <div class="search-box-container">
+            <input type="text" id="command-search-input" placeholder="Search by username or command...">
+          </div>
+          <button class="refresh-btn" id="refresh-commands-btn">🔄 Refresh</button>
+        </div>
+        <div class="table-wrapper">
+          <table id="commands-table">
+            <thead>
+              <tr>
+                <th>Log ID</th>
+                <th>Room</th>
+                <th>User</th>
+                <th>Command</th>
+                <th>Output Snippet</th>
+                <th>Exit Code</th>
+                <th>Execution Time</th>
+              </tr>
+            </thead>
+            <tbody id="commands-table-body">
+              <tr>
+                <td colspan="7" class="loading-placeholder">Loading command logs...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>&copy; 2026 Collaborative Terminal DBMS System. Developed for coursework evaluation.</p>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script src="index.js"></script>
+</body>
+</html>
