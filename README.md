@@ -1,4 +1,4 @@
-# Collaborative Terminal — DBMS Project
+# Collaborative Terminal
 
 A shared, multi-user terminal application (similar to `tmux` over a network) featuring explicit lock-based concurrency control, Redis-backed session state, MySQL-backed persistent logging, a web-based Admin Dashboard, and isolated sandbox containers.
 
@@ -7,23 +7,23 @@ A shared, multi-user terminal application (similar to `tmux` over a network) fea
 ## 📌 Architecture Overview
 
 ```
-┌──────────────┐     WebSocket      ┌────────────────────┐
-│  CLI Client   │◄──────────────────►│   Node.js Server    │
-│ (blessed TUI) │   JSON messages    │  - Express (REST)   │
+┌──────────────┐     WebSocket      ┌-────────────────────┐
+│  CLI Client  │◄──────────────────►│   Node.js Server    │
+│ (blessed TUI)│   JSON messages    │  - Express (REST)   │
 └──────────────┘                    │  - ws (realtime)    │
-                                     │  - node-pty (shell) │
-                                     └─────────┬───────────┘
-                                               │
+                                    │  - node-pty (shell) │
+                                    └─────────┬───────────┘
+                                              │
                    ┌───────────────────────────┼───────────────────────────┐
                    ▼                                                       ▼
-           ┌────────────────┐                                    ┌──────────────────┐
-           │     Redis        │                                    │      MySQL         │
-           │ - control lock    │                                    │ - users             │
-           │ - waiting queue   │                                    │ - rooms             │
-           └────────────────┘                                    │ - sessions          │
-                                                                    │ - command_logs      │
-                                                                    │ - lock_history      │
-                                                                    └──────────────────┘
+           ┌────────────────-┐                                    ┌──────────__────────┐
+           │     Redis       │                                    │      MySQL         │
+           │ - control lock  │                                    │ - users            │
+           │ - waiting queue │                                    │ - rooms            │
+           └────────────────-┘                                    │ - sessions         │
+                                                                  │ - command_logs     │
+                                                                  │ - lock_history     │
+                                                                  └─--─────────────────┘
 ```
 
 Each **Room** maps to a single shared shell session (one real PTY process running inside an isolated Docker container built from [Dockerfile.sandbox](file:///c:/Users/offic/Desktop/Tollab-Terminal%20Collab/docker/Dockerfile.sandbox)).
